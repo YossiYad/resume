@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yossi Yadgar — Full-Stack Developer</title>
+  <meta name="description" content="Yossi Yadgar — Full-stack developer (TypeScript, .NET, C#, PostgreSQL, Redis). Building end-to-end systems that ship." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23388e3c'/%3E%3Ctext x='50%25' y='55%25' text-anchor='middle' dominant-baseline='middle' font-family='system-ui' font-size='18' font-weight='800' fill='white'%3EY%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@300;400;500;700;900&family=Heebo:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      /* Brand — soft Holdie green */
+      --brand-50:#f0f9f1; --brand-100:#dcefdd; --brand-200:#b8e0bb;
+      --brand-300:#81c784; --brand-400:#66bb6a; --brand-500:#4caf50;
+      --brand-600:#43a047; --brand-700:#388e3c; --brand-800:#2e7d32;
+      --brand-900:#1b5e20;
+      --ink:#0f1f12; --ink-soft:#3d4a3e; --ink-mute:#6e7a6f;
+      --bg:#f6f8f5; --bg-warm:#fbfaf6;
+      --line:rgba(15,31,18,0.08);
+      --glass-bg:rgba(255,255,255,0.78);
+      --glass-bg-dim:rgba(255,255,255,0.92);
+
+      --font-en:'Inter','Heebo',-apple-system,system-ui,sans-serif;
+      --font-he:'Heebo','Assistant','Inter',-apple-system,system-ui,sans-serif;
+      --font-serif:'Instrument Serif',Georgia,serif;
+      --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:auto;}
+    html{scroll-behavior:auto;background:#0a0f0b;}
+    body{
+      font-family:var(--font-en);
+      color:var(--ink);
+      background:var(--bg);
+      -webkit-font-smoothing:antialiased;
+      overflow-x:clip; /* clip — not hidden — so position:sticky still works */
+      letter-spacing:-0.011em;
+    }
+    body[data-lang="he"]{font-family:var(--font-he);direction:rtl;letter-spacing:0;}
+    img,video{max-width:100%;display:block;}
+    button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+    a{color:inherit;text-decoration:none;}
+
+    /* ─── Topbar ───────────────────────────────────────────────── */
+    /* Topbar sits over a WHITE video background, so it must be dark-on-light. */
+    .topbar{
+      position:fixed; top:0; left:0; right:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 28px;
+      pointer-events:none;
+    }
+    .topbar > *{pointer-events:auto;}
+    .topbar-brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:600; font-size:14px; letter-spacing:-0.01em;
+      color:var(--ink);
+    }
+    .topbar-brand .glyph{
+      width:26px; height:26px; border-radius:8px;
+      background:linear-gradient(135deg,var(--brand-400),var(--brand-700));
+      display:grid; place-items:center;
+      color:#fff; font-weight:800; font-size:12px;
+      box-shadow:0 4px 14px rgba(56,142,60,0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+    .topbar-brand .role{
+      color:var(--ink-mute); font-weight:400; font-size:13px;
+      padding-inline-start:10px; margin-inline-start:10px;
+      border-inline-start:1px solid var(--line);
+    }
+
+    .lang-toggle{
+      display:inline-flex; align-items:center;
+      padding:4px; border-radius:999px;
+      background:rgba(255,255,255,0.7);
+      backdrop-filter:blur(20px) saturate(140%);
+      -webkit-backdrop-filter:blur(20px) saturate(140%);
+      border:1px solid var(--line);
+      box-shadow:0 2px 12px -4px rgba(15,31,18,0.10);
+    }
+    .lang-toggle button{
+      padding:6px 14px; border-radius:999px;
+      font-size:12px; font-weight:600; letter-spacing:0.02em;
+      color:var(--ink-mute);
+      transition:all .2s ease;
+    }
+    .lang-toggle button.is-active{
+      background:var(--ink); color:#fff;
+      box-shadow:0 2px 8px rgba(15,31,18,0.18);
+    }
+    .lang-toggle button:not(.is-active):hover{color:var(--ink);}
+
+    /* ─── Scene shell ──────────────────────────────────────────── */
+    .scene-section{ position:relative; width:100%; }
+    .scene-sticky{
+      position:sticky; top:0;
+      width:100%; height:100vh;
+      overflow:hidden;
+      background:#ffffff; /* matches the video's white edges so letterbox is invisible */
+    }
+    .scene-video-wrap{ position:absolute; inset:0; }
+    .scene-video-wrap video{
+      width:100%; height:100%;
+      object-fit:contain;          /* show the whole frame — set via data-fit */
+      object-position:center;
+      background:#ffffff;
+    }
+    [data-fit="cover"] .scene-video-wrap video{ object-fit:cover; }
+    /* Soft white fade at the very top of the video so any horizontal edge in
+       the first frame (laptop bezel, hairline, etc.) blends into the page
+       instead of reading as a "bar". Bottom mirror is subtler. */
+    .scene-video-wrap::before{
+      content:""; position:absolute; left:0; right:0; top:0; height:22%;
+      pointer-events:none;
+      background:linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 100%);
+      z-index:1;
+    }
+
+    /* scrim — light by default; variants reshape it */
+    .scene-scrim{
+      position:absolute; inset:0; pointer-events:none;
+      /* Soft top darkening for topbar legibility + light cream wash on edges
+         so the white video blends seamlessly into the cream side-letterbox. */
+      background:
+        linear-gradient(180deg, rgba(15,31,18,0.10) 0%, rgba(15,31,18,0) 18%);
+    }
+    [data-variant="editorial"] .scene-scrim{
+      background:
+        linear-gradient(180deg, rgba(15,31,18,0.12) 0%, rgba(15,31,18,0) 25%, rgba(255,255,255,0.0) 55%, rgba(255,255,255,0.6) 100%);
+    }
+    [data-variant="rail"] .scene-scrim{
+      background:
+        linear-gradient(180deg, rgba(15,31,18,0.10) 0%, rgba(15,31,18,0) 25%);
+    }
+
+    .scene-content{ position:absolute; inset:0; }
+
+    /* ─── Text block — shared positioning frame ───────────────── */
+    .tb{
+      position:absolute;
+      will-change:opacity, transform;
+      transition: opacity .2s ease;
+    }
+
+    /* ─── Variant: GLASS (centered card, lower) ───────────────── */
+    [data-variant="glass"] .tb{
+      left:50%; bottom:9vh;
+      transform:translate(-50%, var(--tb-lift, 0));
+      width:min(640px, calc(100vw - 56px));
+    }
+    [data-variant="glass"] .tb-card{
+      background:rgba(251,250,246,0.92);     /* warm off-white, opaque enough to read on white */
+      backdrop-filter:blur(26px) saturate(160%);
+      -webkit-backdrop-filter:blur(26px) saturate(160%);
+      border:1px solid rgba(15,31,18,0.06);
+      border-radius:22px;
+      padding:26px 30px 28px;
+      box-shadow:
+        0 30px 60px -20px rgba(15,31,18,0.22),
+        0 2px 6px rgba(15,31,18,0.05),
+        0 1px 0 rgba(255,255,255,0.7) inset;
+    }
+    [data-variant="glass"] .tb-eyebrow{
+      display:inline-flex; align-items:center; gap:8px;
+      font-family:var(--font-mono);
+      font-size:11px; font-weight:600;
+      letter-spacing:0.12em;
+      color:var(--brand-800);
+      padding:5px 10px; border-radius:999px;
+      background:rgba(76,175,80,0.10);
+      border:1px solid rgba(76,175,80,0.18);
+      margin-bottom:14px;
+    }
+    [data-variant="glass"] .tb-title{
+      font-size:clamp(22px, 2.4vw, 30px);
+      font-weight:700; line-height:1.15; letter-spacing:-0.022em;
+      color:var(--ink);
+      text-wrap:balance;
+    }
+    [data-variant="glass"] .tb-body{
+      margin-top:10px;
+      font-size:15px; line-height:1.55;
+      color:var(--ink-soft);
+      text-wrap:pretty;
+    }
+    [data-variant="glass"] .tb-meta{
+      margin-top:14px;
+      font-family:var(--font-mono);
+      font-size:11px; letter-spacing:0.06em;
+      color:var(--ink-mute);
+    }
+
+    /* ─── Variant: EDITORIAL (no card, big serif, bottom-left) ─ */
+    /* Dark text on the white video — uses the video itself as the canvas. */
+    [data-variant="editorial"] .tb{
+      left:48px; right:48px; bottom:8vh;
+      transform:translateY(var(--tb-lift, 0));
+      max-width:min(720px, calc(100vw - 96px));
+    }
+    body[data-lang="he"] [data-variant="editorial"] .tb{
+      right:48px; left:48px;
+    }
+    [data-variant="editorial"] .tb-card{
+      color:var(--ink);
+    }
+    [data-variant="editorial"] .tb-eyebrow{
+      display:flex; align-items:center; gap:10px;
+      font-family:var(--font-mono);
+      font-size:11px; font-weight:600; letter-spacing:0.18em;
+      color:var(--brand-700);
+      margin-bottom:18px;
+      text-transform:uppercase;
+    }
+    [data-variant="editorial"] .tb-eyebrow::before{
+      content:""; width:36px; height:1px; background:var(--brand-600); opacity:0.6;
+    }
+    [data-variant="editorial"] .tb-title{
+      font-family:var(--font-serif);
+      font-size:clamp(34px, 5vw, 64px);
+      font-weight:400; line-height:1.02; letter-spacing:-0.02em;
+      color:var(--ink);
+      text-wrap:balance;
+    }
+    body[data-lang="he"] [data-variant="editorial"] .tb-title{
+      font-family:"Instrument Serif", "Frank Ruhl Libre", Georgia, serif;
+      font-weight:500;
+      letter-spacing:-0.015em;
+    }
+    /* All Hebrew titles take the serif treatment (Instrument Serif for any
+       Latin glyphs, Frank Ruhl Libre for Hebrew) at 500 weight. */
+    body[data-lang="he"] .tb-title{
+      font-family:"Instrument Serif", "Frank Ruhl Libre", Georgia, serif;
+      font-weight:500;
+    }
+    /* Eyebrows and meta lines too, so the heading family stays consistent
+       throughout each card. (Body copy stays in the regular sans/serif mix.) */
+    body[data-lang="he"] .tb-eyebrow{
+      font-family:"Instrument Serif", "Frank Ruhl Libre", Georgia, serif;
+      font-weight:500;
+      letter-spacing:0.04em;
+      text-transform:none;
+    }
+    body[data-lang="he"] .tb-meta{
+      font-family:"Instrument Serif", "Frank Ruhl Libre", Georgia, serif;
+      font-weight:500;
+      letter-spacing:0.02em;
+    }
+    [data-variant="editorial"] .tb-body{
+      margin-top:16px;
+      font-size:clamp(15px, 1.2vw, 18px); line-height:1.55;
+      color:var(--ink-soft);
+      max-width:560px;
+      text-wrap:pretty;
+    }
+    [data-variant="editorial"] .tb-meta{
+      margin-top:18px; font-family:var(--font-mono);
+      font-size:11px; letter-spacing:0.1em;
+      color:var(--ink-mute);
+    }
+
+    /* ─── Variant: RAIL (vertical narrow card on trailing edge) */
+    [data-variant="rail"] .tb{
+      right:36px; top:50%;
+      transform:translateY(calc(-50% + var(--tb-lift, 0px)));
+      width:min(380px, calc(100vw - 72px));
+      left:auto; bottom:auto;
+    }
+    body[data-lang="he"] [data-variant="rail"] .tb{
+      left:36px; right:auto;
+    }
+    [data-variant="rail"] .tb-card{
+      background:rgba(15,31,18,0.55);
+      backdrop-filter:blur(28px) saturate(160%);
+      -webkit-backdrop-filter:blur(28px) saturate(160%);
+      border:1px solid rgba(255,255,255,0.10);
+      border-radius:20px;
+      padding:24px 26px 26px;
+      color:#fff;
+      box-shadow:0 30px 70px -20px rgba(0,0,0,0.55);
+      position:relative; overflow:hidden;
+    }
+    [data-variant="rail"] .tb-card::before{
+      content:""; position:absolute; top:0; bottom:0;
+      inset-inline-start:0; width:3px;
+      background:linear-gradient(180deg,var(--brand-300),var(--brand-700));
+    }
+    [data-variant="rail"] .tb-eyebrow{
+      font-family:var(--font-mono);
+      font-size:10.5px; font-weight:600; letter-spacing:0.14em;
+      color:var(--brand-300);
+      margin-bottom:12px;
+    }
+    [data-variant="rail"] .tb-title{
+      font-size:clamp(20px,1.9vw,24px);
+      font-weight:700; line-height:1.18; letter-spacing:-0.018em;
+      text-wrap:balance;
+    }
+    [data-variant="rail"] .tb-body{
+      margin-top:10px;
+      font-size:14px; line-height:1.55;
+      color:rgba(255,255,255,0.78);
+      text-wrap:pretty;
+    }
+    [data-variant="rail"] .tb-meta{
+      margin-top:14px;
+      font-family:var(--font-mono);
+      font-size:10.5px; letter-spacing:0.08em;
+      color:rgba(255,255,255,0.45);
+    }
+
+    /* ─── Skill chips (kind:skills) ───────────────────────────── */
+    .tb-chips{
+      display:flex; flex-wrap:wrap; gap:6px;
+      margin-top:14px;
+    }
+    .tb-chip{
+      font-family:var(--font-mono);
+      font-size:11.5px; font-weight:500; letter-spacing:0.01em;
+      padding:5px 10px; border-radius:7px;
+      background:rgba(76,175,80,0.12);
+      color:var(--brand-800);
+      border:1px solid rgba(76,175,80,0.22);
+    }
+    [data-variant="editorial"] .tb-chip{
+      background:rgba(76,175,80,0.10);
+      color:var(--brand-800);
+      border-color:rgba(76,175,80,0.22);
+    }
+    [data-variant="rail"] .tb-chip{
+      background:rgba(255,255,255,0.08);
+      color:#fff;
+      border-color:rgba(255,255,255,0.16);
+    }
+
+    /* ─── Contact rows (kind:cta) ─────────────────────────────── */
+    .tb-contacts{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top:18px;
+    }
+    .tb-contact{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 14px; border-radius:12px;
+      font-size:13px; font-weight:600;
+      transition:transform .15s ease, box-shadow .2s ease;
+    }
+    .tb-contact:hover{ transform:translateY(-1px); }
+    .tb-contact .ico{ width:14px; height:14px; opacity:0.8; }
+    .tb-contact.is-primary{
+      background:linear-gradient(135deg,var(--brand-400),var(--brand-700));
+      color:#fff;
+      box-shadow:0 8px 22px -8px rgba(56,142,60,0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+    .tb-contact:not(.is-primary){
+      background:rgba(15,31,18,0.05); color:var(--ink);
+    }
+    [data-variant="editorial"] .tb-contact:not(.is-primary){
+      background:rgba(15,31,18,0.05); color:var(--ink);
+      border:1px solid rgba(15,31,18,0.08);
+    }
+    [data-variant="rail"] .tb-contact:not(.is-primary){
+      background:rgba(255,255,255,0.08); color:#fff;
+      border:1px solid rgba(255,255,255,0.14);
+    }
+
+    /* ─── Progress rail (right side, all variants) ────────────── */
+    /* Dark-ink rail on the white video for legibility. */
+    .scene-rail{
+      position:fixed; right:24px; top:50%;
+      transform:translateY(-50%);
+      width:46px; height:60vh;
+      display:flex; align-items:flex-start;
+      pointer-events:none; z-index:30;
+    }
+    body[data-lang="he"] .scene-rail{ left:24px; right:auto; }
+    .scene-rail-track{
+      position:absolute; left:50%; top:0; bottom:0;
+      width:2px; transform:translateX(-50%);
+      background:rgba(15,31,18,0.12);
+      border-radius:2px; overflow:hidden;
+    }
+    .scene-rail-fill{
+      position:absolute; left:0; right:0; top:0;
+      background:linear-gradient(180deg,var(--brand-400),var(--brand-700));
+      border-radius:2px;
+      transition:height .12s linear;
+    }
+    .scene-rail-marks{ position:absolute; inset:0; }
+    .scene-rail-mark{
+      position:absolute; transform:translateY(-50%);
+      left:0; right:0;
+      display:flex; align-items:center; gap:10px;
+      font-family:var(--font-mono); font-size:10px;
+      color:rgba(15,31,18,0.35);
+      letter-spacing:0.1em; font-weight:600;
+      transition:color .2s ease, transform .2s ease;
+    }
+    .scene-rail-mark .dot{
+      width:6px; height:6px; border-radius:50%;
+      background:rgba(15,31,18,0.32);
+      margin-left:calc(50% - 3px);
+      transition:all .2s ease;
+    }
+    .scene-rail-mark .num{ flex:0 0 auto; }
+    .scene-rail-mark.is-active{ color:var(--ink); }
+    .scene-rail-mark.is-active .dot{
+      background:var(--brand-600);
+      box-shadow:0 0 0 4px rgba(76,175,80,0.18);
+      transform:scale(1.3);
+    }
+
+    /* ─── Scroll hint (context-aware: down at top, up at bottom) ─────────── */
+    .scroll-hint{
+      position:fixed; left:50%;
+      transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      font-family:var(--font-mono);
+      font-size:10px; letter-spacing:0.22em; font-weight:600;
+      color:var(--ink-mute);
+      text-transform:uppercase;
+      pointer-events:none;
+      z-index:20;
+      animation:hintFade .35s ease both;
+    }
+    .scroll-hint-down{ bottom:2.5vh; }
+    .scroll-hint-up{ top:90px; }
+    .scroll-hint .bar{
+      width:1px; height:32px;
+      animation:hintPulse 1.6s ease-in-out infinite;
+    }
+    /* "Down" bar: solid at top, fading down — reads as descending into the page */
+    .scroll-hint-down .bar{
+      background:linear-gradient(180deg,var(--ink) 0%,rgba(15,31,18,0) 100%);
+      transform-origin:top;
+    }
+    /* "Up" bar: solid at bottom, fading up — reads as ascending */
+    .scroll-hint-up .bar{
+      background:linear-gradient(0deg,var(--ink) 0%,rgba(15,31,18,0) 100%);
+      transform-origin:bottom;
+    }
+    @keyframes hintPulse{
+      0%,100%{transform:scaleY(0.5);opacity:0.4;}
+      50%{transform:scaleY(1);opacity:0.85;}
+    }
+    @keyframes hintFade{
+      from{opacity:0; transform:translate(-50%, 4px);}
+      to{opacity:1; transform:translate(-50%, 0);}
+    }
+
+    /* ─── Footer marker (after the scene) ─────────────────────── */
+    .scene-footer{
+      position:relative; padding:28px 0; text-align:center;
+      background:#0a0f0b; color:rgba(255,255,255,0.45);
+      font-family:var(--font-mono); font-size:11px; letter-spacing:0.14em;
+    }
+
+    /* Mobile niceties */
+    @media (max-width: 720px){
+      [data-variant="glass"] .tb{ width:calc(100vw - 32px); bottom:6vh; }
+      [data-variant="glass"] .tb-card{ padding:20px 22px; border-radius:18px; }
+      [data-variant="editorial"] .tb{ left:24px; right:24px; bottom:6vh; }
+      [data-variant="rail"] .tb{
+        position:absolute; left:16px; right:16px; bottom:6vh;
+        top:auto; transform:translateY(var(--tb-lift, 0)); width:auto;
+      }
+      body[data-lang="he"] [data-variant="rail"] .tb{ left:16px; right:16px; }
+      .scene-rail{ display:none; }
+      .topbar{ padding:14px 18px; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .scroll-hint .bar{ animation:none; }
+    }
+
+    /* ─── Block timing editor (inside Tweaks panel) ────────────────────── */
+    .bt-section{ display:flex; flex-direction:column; gap:10px; }
+    .bt-hint{
+      font-size:10.5px; line-height:1.4;
+      color:rgba(41,38,27,0.55);
+      margin-bottom:2px;
+    }
+    .bt-row{ display:flex; flex-direction:column; gap:4px; }
+    .bt-lbl{
+      display:flex; justify-content:space-between; align-items:baseline;
+      gap:8px;
+      font-size:11px;
+    }
+    .bt-name{
+      color:rgba(41,38,27,0.78); font-weight:500;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      flex:1 1 auto; min-width:0;
+    }
+    .bt-val{
+      color:rgba(41,38,27,0.5);
+      font-variant-numeric:tabular-nums;
+      flex:0 0 auto;
+      font-family:ui-monospace,SFMono-Regular,monospace;
+      font-size:10.5px;
+    }
+    .bt-track{
+      position:relative; height:22px;
+      cursor:default;
+      touch-action:none; user-select:none;
+    }
+    .bt-track-bg{
+      position:absolute; left:0; right:0; top:50%;
+      height:3px; margin-top:-1.5px;
+      background:rgba(15,31,18,0.10);
+      border-radius:2px;
+    }
+    .bt-tick{
+      position:absolute; top:50%;
+      width:1px; height:7px; margin-top:-3.5px;
+      background:rgba(15,31,18,0.12);
+      transform:translateX(-0.5px);
+      pointer-events:none;
+    }
+    .bt-fill{
+      position:absolute; top:50%;
+      height:5px; margin-top:-2.5px;
+      background:linear-gradient(90deg, var(--brand-400), var(--brand-700));
+      border-radius:3px;
+      cursor:grab;
+      box-shadow:0 1px 2px rgba(56,142,60,0.25);
+    }
+    .bt-fill:active{ cursor:grabbing; }
+    .bt-handle{
+      position:absolute; top:50%;
+      width:14px; height:14px; margin-top:-7px;
+      transform:translateX(-7px);
+      border-radius:50%;
+      background:#fff;
+      border:2px solid var(--brand-700);
+      box-shadow:0 1px 3px rgba(15,31,18,0.25);
+      cursor:ew-resize;
+      z-index:2;
+    }
+    .bt-handle:hover{ background:var(--brand-50); }
+    .bt-cursor{
+      position:absolute; top:-2px; bottom:-2px;
+      width:2px; margin-left:-1px;
+      background:var(--ink);
+      border-radius:1px;
+      box-shadow:0 0 0 1px rgba(255,255,255,0.6);
+      pointer-events:none;
+      z-index:3;
+      opacity:0.7;
+    }
+    /* In RTL, the inline-start of the handle is on the right edge of the track.
+       Mirror the transform so handles still sit centred over their value. */
+    body[dir="rtl"] .bt-handle{ transform:translateX(7px); }
+    body[dir="rtl"] .bt-cursor{ margin-right:-1px; margin-left:0; }
+
+    .bt-reset{
+      align-self:flex-start;
+      margin-top:4px;
+      padding:5px 10px; border-radius:7px;
+      font-size:10.5px; font-weight:600; letter-spacing:0.02em;
+      background:rgba(15,31,18,0.05); color:rgba(41,38,27,0.72);
+      border:1px solid rgba(15,31,18,0.08);
+      cursor:default;
+    }
+    .bt-reset:hover{ background:rgba(15,31,18,0.08); color:var(--ink); }
+  </style>
+</head>
+<body data-lang="en">
+
+  <div id="root"></div>
+
+  <!-- Scene config — single source of truth (edit this, not the components) -->
+  <script src="config/scene.config.js"></script>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- App -->
+  <script type="text/babel" src="scene.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
