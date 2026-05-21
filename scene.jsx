@@ -94,7 +94,7 @@ function TextBlock({ block, lang, opacity, index, total }) {
   const style = { opacity, "--tb-lift": `${lift}px` };
 
   return (
-    <div className="tb" style={style}>
+    <div className="tb" data-kind={block.kind} style={style}>
       <div className="tb-card">
         {eyebrow && <div className="tb-eyebrow">{eyebrow}</div>}
         {title && <h2 className="tb-title" style={{ fontFamily: '"Instrument Serif", "Frank Ruhl Libre", Georgia, serif', fontWeight: "500" }}>{title}</h2>}
