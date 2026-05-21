@@ -481,11 +481,13 @@
       .lang-toggle{ padding:3px; }
       .lang-toggle button{ padding:5px 10px; font-size:11px; }
 
-      /* Video is ~1:1 — on portrait phones, anchor it to the top so the
-         natural letterbox white space falls at the BOTTOM, where the
-         text blocks live (instead of being split top + bottom and getting
-         overlapped by tall text blocks like the STACK chips). */
-      .scene-video-wrap video{ object-position:center top; }
+      /* Video is ~1:1 — on portrait phones, anchor it high so the natural
+         letterbox white space falls at the BOTTOM, where the text blocks
+         live (instead of being split top + bottom and getting overlapped
+         by tall text blocks like the STACK chips). 8% (not pure top) gives
+         a small bit of breathing room above the subject so it doesn't
+         crowd the topbar. */
+      .scene-video-wrap video{ object-position:center 8%; }
       /* With the video anchored to the top of the viewport, the top fade
          (originally to blend a horizontal edge in the first frame) now
          washes over the subject's head. Drop it on mobile. */
@@ -511,6 +513,10 @@
       [data-variant="glass"] .tb-body{ font-size:14px !important; line-height:1.5; }
 
       [data-variant="editorial"] .tb{ left:18px; right:18px; bottom:4vh; max-width:none; }
+      /* STACK block: chips reflow to 4-per-row below, so the block shrinks
+         and we can drop it a bit further so the title sits lower in the
+         viewport (matches the other blocks visually). */
+      [data-variant="editorial"] .tb[data-kind="skills"]{ bottom:2vh; }
       [data-variant="editorial"] .tb-title{
         font-size:clamp(24px, 7vw, 34px) !important;
         line-height:1.06;
@@ -544,8 +550,9 @@
       .tb-contacts{ gap:6px; margin-top:14px; }
       .tb-contact{ padding:10px 12px; font-size:13px; }
 
-      /* Skill chips: 3 per row on mobile (4 rows of 3) */
-      .tb-chips{ grid-template-columns:repeat(3, max-content) !important; gap:5px; margin-top:12px; }
+      /* Skill chips: 4 per row on mobile (3 rows of 4) — keeps the block
+         shorter so the STACK page doesn't push the title too high. */
+      .tb-chips{ grid-template-columns:repeat(4, max-content) !important; gap:5px; margin-top:12px; }
       .tb-chip{ font-size:11px; padding:4px 8px; }
 
       /* Footer */
