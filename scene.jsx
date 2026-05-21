@@ -60,6 +60,7 @@ const VideoLayer = React.memo(function VideoLayer({ videoRef, src, srcWebm, post
         ref={videoRef}
         muted
         defaultMuted
+        autoPlay
         playsInline
         webkit-playsinline="true"
         x5-playsinline="true"
@@ -67,7 +68,9 @@ const VideoLayer = React.memo(function VideoLayer({ videoRef, src, srcWebm, post
         disableRemotePlayback
         preload="auto"
         poster={poster || undefined}
-        // crossOrigin not needed for same-origin /videos/
+        // muted + playsInline + autoPlay is the iOS-Safari combo that lets the
+        // first frame paint on page load WITHOUT a user gesture. The scroll
+        // loop below pauses it immediately and drives currentTime from scroll.
       >
         {srcWebm && <source src={srcWebm} type="video/webm" />}
         <source src={src} type="video/mp4" />
@@ -254,10 +257,34 @@ function Scene({ variant = "glass", lang = "en", scrollSpeedVhPerSec, showRail =
     return () => v.removeEventListener("loadedmetadata", onMeta);
   }, []); // mount only
 
-  // ─── Mobile unlock: iOS/Android Safari refuses to honour currentTime on a
-  // video that has never been played. On the first user gesture (touch /
-  // scroll / click) we kick play() then immediately pause() — this "unlocks"
-  // seeking for the rest of the session so the scroll-scrub works on phones.
+  // ─── Autoplay-driven first-frame paint: muted + playsInline + autoPlay
+  // is the iOS Safari combo that lets the video paint frame 0 on load,
+  // without waiting for a user gesture. As soon as it starts playing we
+  // pause it and seek to the scroll-driven target so the scroll loop
+  // takes over without a visible flash of forward playback.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    let snapped = false;
+    const snap = () => {
+      if (snapped) return;
+      snapped = true;
+      try {
+        v.pause();
+        v.currentTime = targetTimeRef.current || 0;
+      } catch (e) {}
+    };
+    v.addEventListener("playing", snap, { once: true });
+    v.addEventListener("timeupdate", snap, { once: true });
+    return () => {
+      v.removeEventListener("playing", snap);
+      v.removeEventListener("timeupdate", snap);
+    };
+  }, []); // mount only
+
+  // ─── Gesture fallback: if autoplay was blocked (older WebViews, strict
+  // power-saving modes), this still kicks play()→pause() on the first
+  // touch/scroll/click so the scroll-scrub works.
   useEffect(() => {
     let unlocked = false;
     const unlock = () => {
