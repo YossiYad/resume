@@ -486,6 +486,10 @@
          text blocks live (instead of being split top + bottom and getting
          overlapped by tall text blocks like the STACK chips). */
       .scene-video-wrap video{ object-position:center top; }
+      /* With the video anchored to the top of the viewport, the top fade
+         (originally to blend a horizontal edge in the first frame) now
+         washes over the subject's head. Drop it on mobile. */
+      .scene-video-wrap::before{ display:none; }
       /* Stronger white wash at the bottom of the scene on mobile so any
          video subject that does reach down (laptop, hands) fades into the
          text area cleanly. */
