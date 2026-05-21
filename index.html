@@ -512,11 +512,23 @@
       [data-variant="glass"] .tb-title{ font-size:20px !important; line-height:1.2; }
       [data-variant="glass"] .tb-body{ font-size:14px !important; line-height:1.5; }
 
-      [data-variant="editorial"] .tb{ left:18px; right:18px; bottom:4vh; max-width:none; }
-      /* STACK block: chips reflow to 4-per-row below, so the block shrinks
-         and we can drop it a bit further so the title sits lower in the
-         viewport (matches the other blocks visually). */
-      [data-variant="editorial"] .tb[data-kind="skills"]{ bottom:2vh; }
+      [data-variant="editorial"] .tb{
+        left:18px; right:18px;
+        /* Raised well above iOS Safari's bottom URL bar (which overlays
+           the page on mobile and would otherwise clip the body text and
+           chips). Symmetric across every block. */
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12vh);
+        max-width:none;
+      }
+      @supports (height: 100dvh){
+        /* On browsers that honour the dynamic viewport (modern iOS Safari,
+           Chrome Mobile), 100dvh already excludes the URL bar — so the
+           same visual lift comes from a smaller percentage and we don't
+           waste space when the bar is collapsed. */
+        [data-variant="editorial"] .tb{
+          bottom: calc(env(safe-area-inset-bottom, 0px) + 6dvh);
+        }
+      }
       [data-variant="editorial"] .tb-title{
         font-size:clamp(24px, 7vw, 34px) !important;
         line-height:1.06;
