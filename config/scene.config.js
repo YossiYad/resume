@@ -64,7 +64,7 @@ window.sceneConfig = {
                  he: "TypeScript, ‎.NET, וכל החיבורים באמצע." },
       body:    { en: "Backend & full-stack: Node, Express, .NET / C#, REST, Socket.IO. Data: PostgreSQL + Prisma / Drizzle, Redis, BullMQ. Frontend: React, Vite, TanStack, Zustand.",
                  he: "בק וצד שרת: Node, Express, ‎.NET / C#, REST, Socket.IO. דאטה: PostgreSQL עם Prisma / Drizzle, Redis, BullMQ. צד לקוח: React, Vite, TanStack, Zustand." },
-      chips: ["TypeScript", "C# / .NET", "Node.js", "React", "PostgreSQL", "Redis", "Docker"],
+      chips: ["C", "C++", "Java", "TypeScript", "JavaScript", "React", "Node.js", "C# / .NET", "Python", "Docker", "Redis", "SQL"],
     },
     {
       start: 52, end: 70,
@@ -76,6 +76,10 @@ window.sceneConfig = {
                  he: "מתקשר למוקדי שירות, מנווט בתפריט הקולי עם LLM, ומחבר אותך כשעונה אדם אמיתי. ארכיטקטורת מונורפו (pnpm) מעל PostgreSQL, Redis, BullMQ, Whisper STT, Groq Llama 3.3 70B, Telnyx, Stripe ואפליקציות נייטיב ל-iOS ול-Android עם Capacitor." },
       meta:    { en: "Full-stack · TypeScript · Solo build",
                  he: "פול-סטאק · TypeScript · בנייה עצמאית" },
+      links: [
+        { label: "App",     href: "https://holdie.app",         kind: "arrow" },
+        { label: "Landing", href: "https://holdie.app/landing", kind: "arrow" },
+      ],
     },
     {
       start: 72, end: 86,
@@ -87,6 +91,9 @@ window.sceneConfig = {
                  he: "דשבורדים מבוססי-תפקיד למנהלי מערכת, מנהלי אירוע ושופטים. תזמון, הגדרת רובריקות ועמדות, ניקוד חי ולוחות תוצאות. Postgres עם Drizzle ו-Zod, אימות עם Passport.js ו-Google OAuth, API ב-Express, ו-React עם Vite." },
       meta:    { en: "Full-stack · TypeScript · Team product",
                  he: "פול-סטאק · TypeScript · מוצר צוותי" },
+      links: [
+        { label: "App", href: "https://orbit-ai.space", kind: "arrow" },
+      ],
     },
     {
       start: 88, end: 100,

@@ -122,6 +122,21 @@ function TextBlock({ block, lang, opacity, index, total }) {
           )}
           </div>
         }
+
+        {Array.isArray(block.links) && block.links.length > 0 &&
+        <div className="tb-contacts">
+            {block.links.map((c, i) =>
+          <a key={i}
+          href={c.href}
+          target={c.href && c.href.startsWith("http") ? "_blank" : undefined}
+          rel="noopener"
+          className={"tb-contact" + (i === 0 ? " is-primary" : "")}>
+                <Icon kind={c.kind || "arrow"} />
+                <span>{c.label}</span>
+              </a>
+          )}
+          </div>
+        }
       </div>
     </div>);
 
