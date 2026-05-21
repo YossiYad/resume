@@ -59,7 +59,12 @@ const VideoLayer = React.memo(function VideoLayer({ videoRef, src, srcWebm, post
       <video
         ref={videoRef}
         muted
+        defaultMuted
         playsInline
+        webkit-playsinline="true"
+        x5-playsinline="true"
+        x5-video-player-type="h5"
+        disableRemotePlayback
         preload="auto"
         poster={poster || undefined}
         // crossOrigin not needed for same-origin /videos/
@@ -247,6 +252,46 @@ function Scene({ variant = "glass", lang = "en", scrollSpeedVhPerSec, showRail =
     if (v.readyState >= 1) onMeta();
     v.addEventListener("loadedmetadata", onMeta);
     return () => v.removeEventListener("loadedmetadata", onMeta);
+  }, []); // mount only
+
+  // ─── Mobile unlock: iOS/Android Safari refuses to honour currentTime on a
+  // video that has never been played. On the first user gesture (touch /
+  // scroll / click) we kick play() then immediately pause() — this "unlocks"
+  // seeking for the rest of the session so the scroll-scrub works on phones.
+  useEffect(() => {
+    let unlocked = false;
+    const unlock = () => {
+      if (unlocked) return;
+      const v = videoRef.current;
+      if (!v) return;
+      unlocked = true;
+      try {
+        const p = v.play();
+        if (p && typeof p.then === "function") {
+          p.then(() => { try { v.pause(); v.currentTime = targetTimeRef.current || 0; } catch(e){} })
+           .catch(() => {});
+        } else {
+          try { v.pause(); } catch(e) {}
+        }
+      } catch(e) {}
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("touchend",   unlock);
+      window.removeEventListener("scroll",     unlock);
+      window.removeEventListener("click",      unlock);
+      window.removeEventListener("pointerdown",unlock);
+    };
+    window.addEventListener("touchstart",  unlock, { passive:true });
+    window.addEventListener("touchend",    unlock, { passive:true });
+    window.addEventListener("scroll",      unlock, { passive:true });
+    window.addEventListener("click",       unlock);
+    window.addEventListener("pointerdown", unlock);
+    return () => {
+      window.removeEventListener("touchstart", unlock);
+      window.removeEventListener("touchend",   unlock);
+      window.removeEventListener("scroll",     unlock);
+      window.removeEventListener("click",      unlock);
+      window.removeEventListener("pointerdown",unlock);
+    };
   }, []); // mount only
 
   return (
