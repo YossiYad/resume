@@ -481,6 +481,24 @@
       .lang-toggle{ padding:3px; }
       .lang-toggle button{ padding:5px 10px; font-size:11px; }
 
+      /* Video is ~1:1 — on portrait phones, anchor it to the top so the
+         natural letterbox white space falls at the BOTTOM, where the
+         text blocks live (instead of being split top + bottom and getting
+         overlapped by tall text blocks like the STACK chips). */
+      .scene-video-wrap video{ object-position:center top; }
+      /* Stronger white wash at the bottom of the scene on mobile so any
+         video subject that does reach down (laptop, hands) fades into the
+         text area cleanly. */
+      [data-variant="editorial"] .scene-scrim{
+        background:
+          linear-gradient(180deg,
+            rgba(15,31,18,0.10) 0%,
+            rgba(15,31,18,0) 20%,
+            rgba(255,255,255,0) 45%,
+            rgba(255,255,255,0.85) 70%,
+            #ffffff 88%);
+      }
+
       /* Text blocks: tighter container, smaller type. Editorial title can
          get cramped on phones, so cap it. */
       [data-variant="glass"] .tb{ width:calc(100vw - 24px); bottom:5vh; }
@@ -488,16 +506,16 @@
       [data-variant="glass"] .tb-title{ font-size:20px !important; line-height:1.2; }
       [data-variant="glass"] .tb-body{ font-size:14px !important; line-height:1.5; }
 
-      [data-variant="editorial"] .tb{ left:18px; right:18px; bottom:5vh; max-width:none; }
+      [data-variant="editorial"] .tb{ left:18px; right:18px; bottom:4vh; max-width:none; }
       [data-variant="editorial"] .tb-title{
-        font-size:clamp(28px, 8.5vw, 40px) !important;
-        line-height:1.04;
+        font-size:clamp(24px, 7vw, 34px) !important;
+        line-height:1.06;
       }
       [data-variant="editorial"] .tb-body{
         font-size:14px !important; line-height:1.5;
       }
       [data-variant="editorial"] .tb-eyebrow{
-        font-size:10px; margin-bottom:12px;
+        font-size:10px; margin-bottom:10px;
       }
       [data-variant="editorial"] .tb-eyebrow::before{ width:24px; }
 
