@@ -2,7 +2,7 @@
 
 Interactive scroll-driven CV. A single video plays forward and backward as you scroll, with text blocks fading in over it. EN/HE language toggle in the top bar.
 
-Live: https://yossiyad.github.io/resume/
+Live: https://yossiyad.github.io/portfolio/
 
 ## Updating content
 
